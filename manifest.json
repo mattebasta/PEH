@@ -1,0 +1,13 @@
+{
+    "name" : "PEH",
+    "start_url": "/",
+    "display": "standalone",
+    "icons":[
+        {
+            "src": "Icons/ios/AppIcon@3x.png",
+            "sizes":"180x180",
+            "type": "image/png"
+        }
+    ]
+
+}

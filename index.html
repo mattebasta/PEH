@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" style="margin: 0; padding: 0; overflow: hidden;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <title>PEH</title>
+</head>
+<header style="width: 100vw; height: auto; margin: 0; padding: 8px; background-color: #433A3F; text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large;"> 
+    <p id="headerText" style="font-size: larger; color: aliceblue;">PEH - Pwa Exam Helper</p>
+</header>
+<body style="margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background-color: #3D5A6C;">
+    <div id="wrapper" style="width: 100vw; height: 100vh; display: flex; justify-content: center; flex-direction: column; overflow: hidden;">
+        <div id="initDiv" style="display: flex; justify-content: center; align-items: center; align-content: center; flex-direction: column; padding: 8px;">
+            <p style="text-align: center; font-family: 'Courier New', Courier, monospace; font-size: large; color: #EBF2FA;">
+                PEH è uno strumento che ti permette di ripassare le domande di un esame insieme alle risposte
+            </p>
+            <p style="text-align: center; font-family: 'Courier New', Courier, monospace; font-size: large; color: #EBF2FA;">Per iniziare, scegli il file contenente le domande</p>
+            <label for="file-upload" style="border: 3px solid #EBF2FA; border-radius: 10px; background-color: #433A3F; padding: 8px; color: #EBF2FA; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large;">
+                Scegli File
+            </label>
+            <input id="file-upload" type="file" accept=".json" style="display: none;">
+        </div>
+        <div id="QuestionDiv" style="display: none; justify-content: center; align-items: center; align-content: center; flex-direction: column; width: 100vw; height: 100vh;">
+            <p id="Question" style="text-align: center; font-weight: 700; font-family: 'Courier New', Courier, monospace; font-size: large; color: #EBF2FA;">È tutto pronto</p>
+            <p id="Answer" style="text-align: center; font-family: 'Courier New', Courier, monospace; font-size: large; color: #EBF2FA;">Per partire basta toccare lo schermo</p>
+        </div>
+    </div>
+</body>
+
+<script>
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+        .then(()=>console.log("Service worker ok"))
+        .catch((error)=>console.log("Service worker failed",error));        
+    }
+
+    function startTest() {
+        document.getElementById("initDiv").style.display="none";
+        document.getElementById("QuestionDiv").style.display="flex";
+        document.getElementById("headerText").textContent = uploadedFileName;
+    }
+
+    const uploadedFile = document.getElementById("file-upload");
+    uploadedFile.addEventListener("change", (event) =>{
+        uploadedFileName = event.target.files[0].name;
+        
+        startTest();
+
+        new Response(uploadedFile.files[0]).json().then(json => {
+            var questionMaxID = json.length
+            const clickDiv = document.getElementById("QuestionDiv");
+            clickDiv.addEventListener("click", (event) => {
+                randQuestionID = Math.floor(Math.random() * (Math.floor(questionMaxID) - Math.ceil(0))+ Math.ceil(0))
+                randQuestion = document.getElementById("Question").textContent = json[randQuestionID]['domanda']
+                randAnswer = document.getElementById("Answer").textContent = json[randQuestionID]['risposta']
+                console.log(randQuestionID);
+                console.log(randQuestion);
+                console.log(randAnswer);
+            })
+        })
+    });
+
+</script>
+
+</html>
